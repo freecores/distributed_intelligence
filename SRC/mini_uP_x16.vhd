@@ -104,8 +104,7 @@ architecture Behavioral of mini_uP_x16 is
 	end component;
 	
 	component bus_access_x16
-		port (	clk: in std_logic;
-					en	: in std_logic;
+		port (	en	: in std_logic;
 					dataWrite: out std_logic_vector(15 downto 0);
 					dataRead : in std_logic_vector(15 downto 0));
 	end component;
@@ -145,14 +144,12 @@ begin
 	
 	-- The watchdog and its access to the main databus
 	watchdog_re: bus_access_x16
-		port map (	clk => clk,
-						en	=> watchdog_control(1),
+		port map (	en	=> watchdog_control(1),
 						dataRead => mainDataBus,
 						dataWrite => watchdog_rst_value);
 					
 	watchdog_we: bus_access_x16
-		port map (	clk => clk,
-						en	=> watchdog_control(0),
+		port map (	en	=> watchdog_control(0),
 						dataRead => watchdog_left,
 						dataWrite => mainDataBus);
 
@@ -205,7 +202,7 @@ begin
 						dataport=> mainDataBus);
 					
 	-- The ALU							
-	the_alu : ALU
+	arith_logic_unit : ALU
 		port map(	data1 => dataBus1,
 						data2 => dataBus2,
 						dataA => accumulator,
