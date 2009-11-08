@@ -38,19 +38,16 @@ end bus_register_x16;
 
 architecture Behavioral of bus_register_x16 is
 	signal data: std_logic_vector(15 downto 0);
-	
-	component bus_access_x16
-    Port ( en : in  STD_LOGIC;
-           dataRead : in  STD_LOGIC_VECTOR (15 downto 0);
-           dataWrite : out  STD_LOGIC_VECTOR (15 downto 0));
-	end component;
 begin
-	
-	ba: bus_access_x16
-		port map( 	en => we,
-						dataRead=>data,
-						dataWrite=>dataOut);
-						
+
+	tristate: process(we, data) is
+	begin
+		if we = '1' then
+			dataOut <= data;
+		else
+			dataOut <= (others=>'Z');
+		end if;
+	end process;
 	
 	readData: process(clk) is
 	begin
