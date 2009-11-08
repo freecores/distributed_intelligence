@@ -7,7 +7,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 
 package MY_FUNCS is
-
+	-- Operator sll and srl for a std_logic_vector
 	function "sll"(val : std_logic_vector; shift : integer) return std_logic_vector;
 	function "srl"(val : std_logic_vector; shift : integer) return std_logic_vector;
 end MY_FUNCS;

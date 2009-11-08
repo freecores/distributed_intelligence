@@ -1,7 +1,6 @@
---	Package File Template
+--		UNIT TESTS
 --
---	Purpose: This package defines supplemental types, subtypes, 
---		 constants, and functions 
+--	Purpose: This package gives procedures and function to make automated unit tests.
 
 
 library IEEE;
@@ -9,14 +8,16 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 
 package UnitTest is
-
--- Declare constants
-
--- Declare functions and procedure
-
+	-- assertEqual: 
+	-- This procedure tests if 2 values are equal, if they are not, it shows an error report
 	procedure assertEqual(current, expected: in integer; resultName: in string := "Result"); 
 	procedure assertEqual(current, expected: in std_logic; resultName: in string := "Result");
 	procedure assertEqual(current, expected: in std_logic_vector; resultName: in string := "Result");
+	
+	-- assertOperationResult:
+	-- This procedure tests if an operation is working under overflow conditions. If they are not, it reports an error.
+	-- You can also specify an overflow bit to be verified automatically by the procedure to be at '1' when there is an
+	-- overflow and at '0' when there is no overflow.
 	procedure assertOperationResult(	actual, expected : in integer; opName: in string:= "operation"; overflowCond: boolean := false; overflowBit: std_logic := '-');
 	procedure assertOperationResult(	actual, expected : in std_logic_vector; opName: in string:= "operation"; overflowCond: boolean := false; overflowBit: std_logic := '-');
 end UnitTest;

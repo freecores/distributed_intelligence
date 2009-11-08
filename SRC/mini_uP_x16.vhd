@@ -44,19 +44,25 @@ entity mini_uP_x16 is
 end mini_uP_x16;
 
 architecture Behavioral of mini_uP_x16 is
+	-- Data bus
 	signal dataBus1, dataBus2: std_logic_vector(15 downto 0); -- For ALU data1 and data2
-	signal accumulator: std_logic_vector(15 downto 0); 
 	signal mainDataBus: std_logic_vector(15 downto 0);
 	
+	-- ALU signals (driven by both the ALU and the identifier)
+	signal accumulator: std_logic_vector(15 downto 0); 
+	signal ALUoverflow: std_logic;
 	signal opCode:  ALU_OPCODE;
+	
+	-- Control signals (driven by the controler)
 	signal register_control:  std_logic_vector(7 downto 0); -- re1 we1 re2 we2 re3 we3 re4 we4
 	signal stack_control :  std_logic_vector(1 downto 0); -- en push/pop
 	signal PC_control :  std_logic;
 	signal inc_PC:  std_logic;
 	
+	-- Id signal (driven by the identifier)
 	signal uP_id: std_logic_vector(7 downto 0);
 	
-	
+	-- Watchdog (driven by both the watchdog and the controler)
 	signal watchdog_left: std_logic_vector(15 downto 0);
 	signal watchdog_rst_value: std_logic_vector(15 downto 0);
 	signal watchdog_rst: std_logic;
@@ -129,6 +135,7 @@ architecture Behavioral of mini_uP_x16 is
 			 overflow: out STD_LOGIC );
 	end component;
 begin
+	-- The program counter
 	program_counter: binary_counter_x16 
 		port map( 	clk => clk,
 						set => PC_control,
@@ -136,6 +143,7 @@ begin
 						set_value => mainDataBus,
 						count => PC);
 	
+	-- The watchdog and its access to the main databus
 	watchdog_re: bus_access_x16
 		port map (	clk => clk,
 						en	=> watchdog_control(1),
@@ -157,6 +165,8 @@ begin
 						watchdog_left => watchdog_left,
 						watchdog_rst_value => watchdog_rst_value,
 						watchdog_rst => watchdog_rst);
+						
+	-- The stack
 	stack: stack_x16
 		generic map( STACK_SIZE => 8)
 		port map(	clk => clk,
@@ -167,40 +177,40 @@ begin
 	
 	-- The 4 Registers
 	R1: bus_register_x16
-		port (	clk=>clk ,
-					re=>register_control(0),
-					we=>register_control(1),
-					reset=>reset,
-					dataport=> mainDataBus);
+		port map (	clk=>clk ,
+						re=>register_control(0),
+						we=>register_control(1),
+						reset=>reset,
+						dataport=> mainDataBus);
 					
 	R2: bus_register_x16
-		port (	clk=>clk ,
-					re=>register_control(2),
-					we=>register_control(3),
-					reset=>reset,
-					dataport=> mainDataBus);
+		port map (	clk=>clk ,
+						re=>register_control(2),
+						we=>register_control(3),
+						reset=>reset,
+						dataport=> mainDataBus);
 					
 	R3: bus_register_x16
-		port (	clk=>clk ,
-					re=>register_control(4),
-					we=>register_control(5),
-					reset=>reset,
-					dataport=> mainDataBus);
+		port map (	clk=>clk ,
+						re=>register_control(4),
+						we=>register_control(5),
+						reset=>reset,
+						dataport=> mainDataBus);
 					
 	R4: bus_register_x16
-		port (	clk=>clk ,
-					re=>register_control(6),
-					we=>register_control(7),
-					reset=>reset,
-					dataport=> mainDataBus);
+		port map (	clk=>clk ,
+						re=>register_control(6),
+						we=>register_control(7),
+						reset=>reset,
+						dataport=> mainDataBus);
 					
 	-- The ALU							
-	alu : ALU
-	port(		data1 => dataBus1;
-				data2 => dataBus2;
-				dataA => accumulator;
-				op => op;
-				overflow => overflow);	
+	the_alu : ALU
+		port map(	data1 => dataBus1,
+						data2 => dataBus2,
+						dataA => accumulator,
+						op => opCode,
+						overflow => ALUoverflow);	
 
 end Behavioral;
 
