@@ -55,7 +55,7 @@ architecture Behavioral of mini_uP_x16 is
 	
 	-- Control signals (driven by the controler)
 	signal register_control:  std_logic_vector(7 downto 0); -- re1 we1 re2 we2 re3 we3 re4 we4
-	signal stack_control :  std_logic_vector(1 downto 0); -- en push/pop
+	signal stack_control :  std_logic_vector(1 downto 0); --push pop
 	signal PC_control :  std_logic;
 	signal inc_PC:  std_logic;
 	
@@ -75,11 +75,11 @@ architecture Behavioral of mini_uP_x16 is
 					code: in std_logic_vector(15 downto 0);
 					opCode: out ALU_OPCODE;
 					register_control: out std_logic_vector(7 downto 0); -- re1 we1 re2 we2 re3 we3 re4 we4
-					stack_control : out std_logic_vector(1 downto 0); -- en push/pop
+					stack_control : out std_logic_vector(1 downto 0); -- push pop
 					PC_control : out std_logic;
 					inc_PC: out std_logic;
 					watchdog_reset: out std_logic;
-					watchdog_control: out std_logic -- re we
+					watchdog_control: out std_logic_vector(1 downto 0) -- re(reset_value) we(left)
 					);
 	end component;
 	
@@ -211,6 +211,19 @@ begin
 						dataA => accumulator,
 						op => opCode,
 						overflow => ALUoverflow);	
-
+	
+	-- Controler
+	controler : decoder_controler_x16
+		port map(	clk=> clk,
+						reset=>  reset,
+						code=>  code,
+						opCode=>  opCode,
+						register_control=> register_control, -- re1 we1 re2 we2 re3 we3 re4 we4
+						stack_control => stack_control, -- push pop
+						PC_control =>  PC_control,
+						inc_PC=> inc_PC,
+						watchdog_reset=> watchdog_rst,
+						watchdog_control=> watchdog_control  -- re(reset_value) we(left)
+						);
 end Behavioral;
 
